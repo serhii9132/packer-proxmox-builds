@@ -25,6 +25,11 @@ source "proxmox-iso" "ubuntu" {
   serials                   = var.serials
   communicator              = var.communicator
 
+  bios                      = var.bios
+  efi_config {
+    efi_storage_pool        = var.pve-name-datastore
+  }
+
   disks {
     storage_pool            = var.pve-name-datastore
     disk_size               = var.disk_size

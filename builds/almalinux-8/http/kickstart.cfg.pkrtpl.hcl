@@ -42,6 +42,7 @@ ignoredisk --only-use=sda
 # Partition clearing information
 clearpart --all --initlabel 
 # Disk partitioning information
+part /boot/efi --fstype="efi" --ondisk=sda --size=600
 part pv.1 --fstype="lvmpv" --ondisk=sda --grow
 part /boot --fstype="xfs" --ondisk=sda --size=1024
 volgroup vg0 --pesize=4096 pv.1

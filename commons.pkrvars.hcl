@@ -10,6 +10,8 @@ serials = ["socket"]
 
 communicator = "ssh"
 
+bios = "ovmf"
+
 type_bus = "scsi"
 is_umount_iso = true
 iso_download_pve = true

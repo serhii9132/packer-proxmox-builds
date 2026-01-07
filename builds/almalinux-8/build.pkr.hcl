@@ -50,6 +50,10 @@ variable "communicator" {
   type = string
 }
 
+variable "bios" {
+  type = string
+}
+
 variable "type_bus" {
   type = string
 }

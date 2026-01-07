@@ -7,7 +7,7 @@ packer {
   }
 }
 
-source "proxmox-iso" "ubuntu" {
+source "proxmox-iso" "almalinux" {
   proxmox_url               = var.proxmox_url
   insecure_skip_tls_verify  = var.insecure_skip_tls_verify
   username                  = var.pve_username
@@ -24,6 +24,11 @@ source "proxmox-iso" "ubuntu" {
   scsi_controller           = var.scsi_controller
   serials                   = var.serials
   communicator              = var.communicator
+
+  bios                      = var.bios
+  efi_config {
+    efi_storage_pool        = var.pve-name-datastore
+  }
 
   disks {
     storage_pool            = var.pve-name-datastore
@@ -57,11 +62,18 @@ source "proxmox-iso" "ubuntu" {
   http_interface            = var.http_interface
 
   boot_wait                 = var.boot_wait
-  boot_command              = ["<up><tab><wait> inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/kickstart.cfg <wait5><enter>"]
+  boot_command              = [
+    "c<wait>",
+    "linuxefi /images/pxeboot/vmlinuz",
+    " inst.stage2=hd:LABEL=AlmaLinux-8-10-x86_64-dvd",
+    " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/kickstart.cfg <wait><enter>",
+    "initrdefi /images/pxeboot/initrd.img<enter>",
+    "boot<enter><wait>",
+  ]
 }
 
 build {
-  sources = ["sources.proxmox-iso.ubuntu"]
+  sources = ["sources.proxmox-iso.almalinux"]
 
   provisioner "shell" {
     inline = [
