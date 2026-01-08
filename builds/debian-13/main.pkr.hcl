@@ -64,13 +64,11 @@ source "proxmox-iso" "debian" {
   boot_wait                 = var.boot_wait
 
   boot_command = [
-    "<wait><wait><wait>c<wait><wait><wait>",
+    "<wait3>c<wait3>",
     "linux /install.amd/vmlinuz ",
-    "auto=true ",
-    "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
-    "interface=auto ",
+    "auto-install/enable=true preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
     "netcfg/hostname=debian netcfg/get_hostname=debian netcfg/get_domain='' ",
-    "vga=788 noprompt quiet --<enter>",
+    "ipv6.disable=1 vga=788 noprompt quiet --<enter>",
     "initrd /install.amd/initrd.gz<enter>",
     "boot<enter>"]
 }
