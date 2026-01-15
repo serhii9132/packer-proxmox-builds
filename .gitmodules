@@ -1,0 +1,3 @@
+[submodule "provision"]
+	path = provision
+	url = git@github.com:serhii9132/packer-provision-scripts.git
