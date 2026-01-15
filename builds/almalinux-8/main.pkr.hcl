@@ -52,21 +52,26 @@ source "proxmox-iso" "almalinux" {
     iso_checksum            = local.iso_checksum
   }
 
+  additional_iso_files { 
+    type                    = var.type_bus
+    cd_content              = local.autoinstall_files
+    cd_label                = var.cd_label
+    iso_storage_pool        = var.pve-name-datastore
+    unmount                 = var.is_umount_iso
+  }
+
   ssh_username              = var.sudo_user
   ssh_private_key_file      = var.ssh_pivate_key_file
   ssh_timeout               = var.ssh_timeout
 
   qemu_agent                = var.is_qemu_agent
 
-  http_content              = local.autoinstall_files
-  http_interface            = var.http_interface
-
   boot_wait                 = var.boot_wait
   boot_command              = [
     "c<wait>",
     "linuxefi /images/pxeboot/vmlinuz",
-    " inst.stage2=hd:LABEL=AlmaLinux-8-10-x86_64-dvd",
-    " inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/kickstart.cfg <wait><enter>",
+    " ipv6.disable=1 inst.stage2=hd:LABEL=AlmaLinux-8-10-x86_64-dvd",
+    " inst.ks=hd:LABEL=${var.cd_label}:/kickstart.cfg <wait><enter>",
     "initrdefi /images/pxeboot/initrd.img<enter>",
     "boot<enter><wait>",
   ]

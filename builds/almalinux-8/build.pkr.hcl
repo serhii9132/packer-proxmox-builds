@@ -3,9 +3,8 @@ locals {
   name_iso_file = "AlmaLinux-8.10-x86_64-boot.iso"
   iso_url = "https://repo.almalinux.org/almalinux/8.10/isos/x86_64/${local.name_iso_file}"
   
-  http_dir = "http"
   autoinstall_files = {
-    "/kickstart.cfg" = templatefile("./${local.http_dir}/kickstart.cfg.pkrtpl.hcl", { var = var })
+    "/kickstart.cfg" = templatefile(abspath("${path.root}/${var.cd_label}/kickstart.cfg.pkrtpl.hcl"), { var = var })
   }
 }
 
@@ -94,11 +93,6 @@ variable "is_qemu_agent" {
   type = bool
 }
 
-variable "http_interface" {
-  type = string
-  default = env("HTTP_INTERFACE")
-}
-
 variable "boot_wait" {
   type = string
 }
@@ -106,4 +100,8 @@ variable "boot_wait" {
 variable "vm_hostname" {
   type = string
   default = "almalinux"
+}
+
+variable "cd_label" {
+  type = string
 }

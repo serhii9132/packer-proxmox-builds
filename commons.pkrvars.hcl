@@ -28,3 +28,5 @@ ssh_timeout = "30m"
 is_qemu_agent = true
 
 boot_wait = "10s"
+
+cd_label = "cidata"

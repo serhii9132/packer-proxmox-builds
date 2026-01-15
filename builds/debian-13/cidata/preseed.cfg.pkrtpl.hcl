@@ -1,5 +1,4 @@
-# Automatic installation
-d-i auto-install/enable boolean true
+d-i preseed/early_command string umount /mnt/cdrom2 && echo 1 > /sys/block/sr1/device/delete
 
 # Set OS locale
 d-i debian-installer/language string en
@@ -91,7 +90,7 @@ d-i apt-setup/use_mirror boolean true
 tasksel tasksel/first multiselect ssh-server
 
 # Extra packages to be installed
-d-i pkgsel/include string sudo python3 python3-apt wget rsync bash-completion
+d-i pkgsel/include string sudo python3 python3-apt wget rsync bash-completion qemu-guest-agent
 
 # Disable polularity contest
 popularity-contest popularity-contest/participate boolean false

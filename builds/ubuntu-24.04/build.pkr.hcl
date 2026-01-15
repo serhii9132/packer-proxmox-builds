@@ -5,8 +5,8 @@ locals {
   
   http_dir = "http"
   autoinstall_files = {
-      "/meta-data" = file("./${local.http_dir}/meta-data")
-      "/user-data" = templatefile("./${local.http_dir}/user-data.pkrtpl.hcl", { var = var })
+    "/meta-data" = file(abspath("${path.root}/${var.cd_label}/meta-data"))
+    "/user-data" = templatefile(abspath("${path.root}/${var.cd_label}/user-data.pkrtpl.hcl"), { var = var })
   }
 }
 
@@ -95,11 +95,6 @@ variable "is_qemu_agent" {
   type = bool
 }
 
-variable "http_interface" {
-  type = string
-  default = env("HTTP_INTERFACE")
-}
-
 variable "boot_wait" {
   type = string
 }
@@ -107,4 +102,8 @@ variable "boot_wait" {
 variable "vm_hostname" {
   type = string
   default = "ubuntu"
+}
+
+variable "cd_label" {
+  type = string
 }

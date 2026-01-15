@@ -52,54 +52,53 @@ source "proxmox-iso" "debian" {
     iso_checksum            = local.iso_checksum
   }
 
+  additional_iso_files { 
+    type                    = var.type_bus
+    cd_content              = local.autoinstall_files
+    cd_label                = var.cd_label
+    iso_storage_pool        = var.pve-name-datastore
+    unmount                 = var.is_umount_iso
+  }
+
   ssh_username              = var.sudo_user
   ssh_private_key_file      = var.ssh_pivate_key_file
   ssh_timeout               = var.ssh_timeout
 
   qemu_agent                = var.is_qemu_agent
-
-  http_content              = local.autoinstall_files
-  http_interface            = var.http_interface
   
   boot_wait                 = var.boot_wait
 
   boot_command = [
     "<wait3>c<wait3>",
     "linux /install.amd/vmlinuz ",
-    "auto-install/enable=true preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
+    "auto-install/enable=true priority=critical preseed/file=/mnt/cdrom2/preseed.cfg ",
     "netcfg/hostname=debian netcfg/get_hostname=debian netcfg/get_domain='' ",
     "ipv6.disable=1 vga=788 noprompt quiet --<enter>",
     "initrd /install.amd/initrd.gz<enter>",
-    "boot<enter>"]
+    "boot<enter>",
+    "<wait10><esc><wait><esc><wait><enter><wait>",
+    "<leftAltOn><f2><leftAltOff>",
+    "<enter><wait>",
+    "mkdir /mnt/cdrom2<enter>",
+    "mount /dev/sr1 /mnt/cdrom2<enter>",
+    "<leftAltOn><f1><leftAltOff><wait5>",
+    "<esc><wait><enter>"
+  ]
 }
 
 build {
   sources = ["sources.proxmox-iso.debian"]
 
-  provisioner "shell" {
-    inline = [
-      "sudo rm -f /etc/ssh/ssh_host_*",
-      "sudo apt -y autoremove --purge",
-      "sudo apt -y clean",
-      "sudo apt -y autoclean",
-      "sudo truncate -s 0 /etc/machine-ide",
-      "sudo rm -f /var/lib/dbus/machine-id",
-      "sudo ln -s /etc/machine-id /var/lib/dbus/machine-id"
-    ]
-  }
-
   provisioner "file" {
-    source = "./files/regenerate_ssh_host_keys.service"
+    source = "./provision/files/regenerate_ssh_host_keys.service"
     destination = "/tmp/regenerate_ssh_host_keys.service"
   }
 
   provisioner "shell" {
-    inline = [
-      "sudo cp /tmp/regenerate_ssh_host_keys.service /etc/systemd/system/regenerate-ssh-host-keys.service",
-      "sudo chown root:root /etc/systemd/system/regenerate-ssh-host-keys.service",
-      #"sudo systemd daemon-reload",
-      "sudo systemctl enable regenerate-ssh-host-keys.service",
-      "sudo rm /tmp/regenerate_ssh_host_keys.service"
+    scripts = [
+      "provision/scripts/regenerate_ssh_host_keys.sh",
+      "provision/scripts/cleanup.sh",
     ]
+    execute_command = "sudo {{ .Path }}"
   }
 }

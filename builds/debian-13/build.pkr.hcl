@@ -1,11 +1,10 @@
 locals {
   iso_checksum = "file:https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS"
-  name_iso_file = "debian-13.2.0-amd64-netinst.iso"
+  name_iso_file = "debian-13.3.0-amd64-netinst.iso"
   iso_url = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/${local.name_iso_file}"
   
-  http_dir = "http"
   autoinstall_files = {
-      "/preseed.cfg" = templatefile("./${local.http_dir}/preseed.cfg.pkrtpl.hcl", { var = var })
+      "/preseed.cfg" = templatefile(abspath("${path.root}/${var.cd_label}/preseed.cfg.pkrtpl.hcl"), { var = var })
   }
 }
 
@@ -94,11 +93,6 @@ variable "is_qemu_agent" {
   type = bool
 }
 
-variable "http_interface" {
-  type = string
-  default = env("HTTP_INTERFACE")
-}
-
 variable "boot_wait" {
   type = string
 }
@@ -106,4 +100,8 @@ variable "boot_wait" {
 variable "vm_hostname" {
   type = string
   default = "debian"
+}
+
+variable "cd_label" {
+  type = string
 }
