@@ -5,6 +5,7 @@ All sensitive data is configured using environment variables. See the Usage sect
 Available OS Images
 - Ubuntu 24.04.3 LTS
 - AlmaLinux 8.10
+- Debian 13.3
 
 ### Template details
 - CPU: 2 cores
@@ -18,7 +19,7 @@ Available OS Images
 
 ### Tested With
 - Packer: v1.14.3
-- Proxmox VE: 8.4.0
+- Proxmox VE: 9.1.4
 
 ### Usage
 1. Clone the repository.
@@ -46,6 +47,9 @@ make ubuntu2404
 
 # Build an AlmaLinux image
 make almalinux8
+
+# Build an Debian image
+make debian13
 
 ```
 
