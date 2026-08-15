@@ -1,6 +1,6 @@
 locals {
   iso_checksum = "file:https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS"
-  name_iso_file = "debian-13.3.0-amd64-netinst.iso"
+  name_iso_file = "debian-13.6.0-amd64-netinst.iso"
   iso_url = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/${local.name_iso_file}"
   
   autoinstall_files = {
@@ -81,11 +81,11 @@ variable "net_adapter_model" {
   type = string
 }
 
-variable "net_adapter_bridge" {
+variable "net_name_bridge" {
   type = string
 }
 
-variable "ssh_timeout" {
+variable "net_vlan_tag" {
   type = string
 }
 

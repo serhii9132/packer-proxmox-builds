@@ -23,16 +23,14 @@ d-i mirror/http/proxy string
 d-i clock-setup/utc boolean true
 
 # Set timezone
-d-i time/zone string Europe/Kyiv
+d-i time/zone string UTC
 
 # Create root uer 
 d-i passwd/root-login boolean true
-d-i passwd/root-password-crypted password ${var.root_password}
+d-i passwd/root-password-crypted password ${var.password}
 
-# Create a normal user account
-d-i passwd/user-fullname string ${var.sudo_user}
-d-i passwd/username string ${var.sudo_user}
-d-i passwd/user-password-crypted password ${var.sudo_user_pass}
+# Create a normal user account now?
+d-i passwd/make-user boolean false
 
 # Disk configuration
 d-i partman-auto/method string lvm
@@ -40,6 +38,7 @@ d-i partman-auto-lvm/guided_size string max
 d-i partman-lvm/device_remove_lvm boolean true
 d-i partman-lvm/confirm boolean true
 d-i partman-lvm/confirm_nooverwrite boolean true
+d-i partman-auto-lvm/new_vg_name string debian
 d-i partman-auto/expert_recipe string \
         part :: \
                 538 538 1075 free \
@@ -48,10 +47,10 @@ d-i partman-auto/expert_recipe string \
                         method{ efi } \
                         format{ } \
                         . \
-                128 512 256 ext2 \
+                500 1000 500 ext4 \
                         $defaultignore{ } \
                         method{ format } format{ } \
-                        use_filesystem{ } filesystem{ ext2 } \
+                        use_filesystem{ } filesystem{ ext4 } \
                         mountpoint{ /boot } \
                         . \
                 1000 100000 -1 ext4 \
@@ -77,7 +76,7 @@ d-i partman-partitioning/default_label string gpt
 # Bootloader options
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean true
-d-i grub-installer/bootdev string /dev/sda
+d-i grub-installer/bootdev string default
 d-i grub-installer/force-efi-extra-removable boolean true
 
 # Do not scan additional CDs
@@ -106,10 +105,8 @@ d-i finish-install/reboot_in_progress note
 
 d-i preseed/late_command string \
  in-target bash -c 'echo "PasswordAuthentication no" >> /etc/ssh/sshd_config.d/50-cloud-init.conf'; \
- in-target bash -c 'echo "${var.sudo_user} ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/${var.sudo_user}'; \
- in-target usermod -aG sudo ${var.sudo_user}; \
- in-target mkdir -p /home/${var.sudo_user}/.ssh; \
- in-target bash -c 'echo "${var.ssh_public_key}" > /home/${var.sudo_user}/.ssh/authorized_keys'; \
- in-target chown -R ${var.sudo_user}:${var.sudo_user} /home/${var.sudo_user}/.ssh; \
- in-target chmod 700 /home/${var.sudo_user}/.ssh; \
- in-target chmod 600 /home/${var.sudo_user}/.ssh/authorized_keys
+ in-target bash -c 'echo "PermitRootLogin yes" >> /etc/ssh/sshd_config.d/50-cloud-init.conf'; \
+ in-target mkdir -p /root/.ssh; \
+ in-target bash -c 'echo "${var.ssh_public_key}" > /root/.ssh/authorized_keys'; \
+ in-target chmod 700 /root/.ssh; \
+ in-target chmod 600 /root/.ssh/authorized_keys

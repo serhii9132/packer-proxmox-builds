@@ -21,7 +21,7 @@ autoinstall:
     - rsync
     - bash-completion
 
-  timezone: "Europe/Kyiv"
+  timezone: "UTC"
 
   updates: all
     
@@ -32,15 +32,11 @@ autoinstall:
   user-data:
     hostname: ${var.vm_hostname}
     users:
-      - name: ${var.sudo_user}
-        passwd: ${var.sudo_user_pass}
-        shell: /bin/bash
-        lock_passwd: False
-        groups: sudo
-        sudo: "ALL=(ALL) NOPASSWD:ALL"
+      - name: root
         ssh_authorized_keys:
-         - ${var.ssh_public_key}
+          - ${var.ssh_public_key}
+    disable_root: false
     chpasswd:
       expire: false
       users:
-      - {name: root, password: ${var.root_password}}
+      - {name: root, password: ${var.password}}

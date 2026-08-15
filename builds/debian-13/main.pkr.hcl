@@ -1,14 +1,14 @@
 packer {
   required_plugins {
-    name = {
-      version = "~> 1"
+    proxmox = {
+      version = "1.2.3"
       source  = "github.com/hashicorp/proxmox"
     }
   }
 }
 
 source "proxmox-iso" "debian" {
-  proxmox_url               = var.proxmox_url
+  proxmox_url               = var.pve_url
   insecure_skip_tls_verify  = var.insecure_skip_tls_verify
   username                  = var.pve_username
   token                     = var.pve_token
@@ -27,11 +27,11 @@ source "proxmox-iso" "debian" {
 
   bios                      = var.bios
   efi_config {
-    efi_storage_pool        = var.pve-name-datastore
+    efi_storage_pool        = var.storage_pool_disks
   }
 
   disks {
-    storage_pool            = var.pve-name-datastore
+    storage_pool            = var.storage_pool_disks
     disk_size               = var.disk_size
     format                  = var.format_disk
     io_thread               = var.is_io_thread
@@ -40,14 +40,15 @@ source "proxmox-iso" "debian" {
 
   network_adapters {
     model                   = var.net_adapter_model
-    bridge                  = var.net_adapter_bridge
+    bridge                  = var.net_name_bridge
+    vlan_tag                = var.net_vlan_tag == "" ? null : var.net_vlan_tag
   }
 
   boot_iso {
     type                    = var.type_bus
     unmount                 = var.is_umount_iso
     iso_download_pve        = var.iso_download_pve
-    iso_storage_pool        = var.pve-name-datastore
+    iso_storage_pool        = var.storage_pool_iso
     iso_url                 = local.iso_url
     iso_checksum            = local.iso_checksum
   }
@@ -56,12 +57,12 @@ source "proxmox-iso" "debian" {
     type                    = var.type_bus
     cd_content              = local.autoinstall_files
     cd_label                = var.cd_label
-    iso_storage_pool        = var.pve-name-datastore
+    iso_storage_pool        = var.storage_pool_iso
     unmount                 = var.is_umount_iso
   }
 
-  ssh_username              = var.sudo_user
-  ssh_private_key_file      = var.ssh_pivate_key_file
+  ssh_username              = var.ssh_username
+  ssh_private_key_file      = var.ssh_private_key_file
   ssh_timeout               = var.ssh_timeout
 
   qemu_agent                = var.is_qemu_agent
@@ -99,6 +100,6 @@ build {
       "provision/scripts/regenerate_ssh_host_keys.sh",
       "provision/scripts/cleanup.sh",
     ]
-    execute_command = "sudo {{ .Path }}"
+    execute_command = "{{ .Path }}"
   }
 }

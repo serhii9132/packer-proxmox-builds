@@ -16,7 +16,7 @@ variable "task_timeout" {
 
 variable "vm_name" {
   type = string
-  default = "ubuntu-24.04-lts"
+  default = "ubuntu-24.04"
 }
 
 variable "os" {
@@ -83,11 +83,11 @@ variable "net_adapter_model" {
   type = string
 }
 
-variable "net_adapter_bridge" {
+variable "net_name_bridge" {
   type = string
 }
 
-variable "ssh_timeout" {
+variable "net_vlan_tag" {
   type = string
 }
 

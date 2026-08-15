@@ -81,11 +81,11 @@ variable "net_adapter_model" {
   type = string
 }
 
-variable "net_adapter_bridge" {
+variable "net_name_bridge" {
   type = string
 }
 
-variable "ssh_timeout" {
+variable "net_vlan_tag" {
   type = string
 }
 

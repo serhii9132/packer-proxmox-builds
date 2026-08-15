@@ -1,7 +1,9 @@
+insecure_skip_tls_verify = true
+
 task_timeout = "15m"
 
 os = "l26"
-cpu_type = "kvm64"
+cpu_type = "host"
 cores = 2
 sockets = 1
 memory = 4096
@@ -21,9 +23,11 @@ format_disk = "qcow2"
 is_io_thread = true
 
 net_adapter_model = "virtio"
-net_adapter_bridge = "vmbr0"
+
+storage_pool_iso = "local"
 
 ssh_timeout = "30m"
+ssh_username = "root"
 
 is_qemu_agent = true
 

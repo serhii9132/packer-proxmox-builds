@@ -1,24 +1,19 @@
-variable "sudo_user" {
+variable "ssh_username" {
   type = string
-  default = env("SUDO_USER")
 }
 
-variable "sudo_user_pass" {
+variable "ssh_timeout" {
   type = string
-  default = env("SUDO_USER_PASSWORD")
 }
 
 variable "ssh_public_key" {
   type = string
-  default = env("SSH_PUBLIC_KEY")
 }
 
-variable "ssh_pivate_key_file" {
+variable "ssh_private_key_file" {
   type = string
-  default = env("SSH_PRIVATE_KEY_FILE")
 }
 
-variable "root_password" {
+variable "password" {
   type = string
-  default = env("ROOT_PASSWORD")
 }
