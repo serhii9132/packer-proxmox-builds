@@ -25,7 +25,6 @@ reboot
 # @standard
 kexec-tools
 qemu-guest-agent
-bash-completion
 
 %end
 

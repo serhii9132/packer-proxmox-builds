@@ -1,30 +1,21 @@
-ENV_FILE   		:= .env
-LOG_DIR    		:= logs
-LOG_TIMESTAMP 	:= $(shell date +"%Y-%m-%d_%H-%M-%S")
-LOAD_ENV 		:= set -a; [ -f $(ENV_FILE) ] && . ./$(ENV_FILE); set +a
+ENV_FILE      := .env
+LOG_DIR       := logs
+LOG_TIMESTAMP := $(shell date +"%Y-%m-%d_%H-%M-%S")
+LOCAL_VARS 	  := $(wildcard local.pkrvars.hcl)
+PACKER_CMD 	  := packer build -var-file=vars/common/common.pkrvars.hcl
 
-.PHONY: ubuntu almalinux debian clean
+TARGETS := almalinux-8 debian-13 ubuntu-24
+
+ifneq ($(LOCAL_VARS),)
+	PACKER_CMD += -var-file=$(LOCAL_VARS)
+endif
+
+.PHONY: init_logs $(TARGETS)
 
 init_logs:
 	@mkdir -p $(LOG_DIR)
 
-ubuntu: init_logs
-	@packer init builds/ubuntu-24.04/main.pkr.hcl
-	@$(LOAD_ENV) && \
-	export PACKER_LOG_PATH="$(LOG_DIR)/ubuntu_build_$(LOG_TIMESTAMP).log" PACKER_LOG=1 && \
-	packer build -var-file=commons.pkrvars.hcl builds/ubuntu-24.04/
-
-almalinux: init_logs
-	@packer init builds/almalinux-8/main.pkr.hcl
-	@$(LOAD_ENV) && \
-	export PACKER_LOG_PATH="$(LOG_DIR)/almalinux_build_$(LOG_TIMESTAMP).log" PACKER_LOG=1 && \
-	packer build -var-file=commons.pkrvars.hcl builds/almalinux-8/
-
-debian: init_logs
-	@packer init builds/debian-13/main.pkr.hcl
-	@$(LOAD_ENV) && \
-	export PACKER_LOG_PATH="$(LOG_DIR)/debian_build_$(LOG_TIMESTAMP).log" PACKER_LOG=1 && \
-	packer build -var-file=commons.pkrvars.hcl builds/debian-13/
-
-clean:
-	rm -rf $(LOG_DIR)
+$(TARGETS): init_logs
+	@packer init .
+	@export PACKER_LOG_PATH="$(LOG_DIR)/$@_build_$(LOG_TIMESTAMP).log" PACKER_LOG=1 && \
+	$(PACKER_CMD) -only=proxmox-iso.$@ -var-file=vars/os/$@.pkrvars.hcl .

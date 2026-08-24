@@ -1,11 +1,29 @@
-locals {
-  iso_checksum = "file:https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS"
-  name_iso_file = "debian-13.6.0-amd64-netinst.iso"
-  iso_url = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/${local.name_iso_file}"
-  
-  autoinstall_files = {
-      "/preseed.cfg" = templatefile(abspath("${path.root}/${var.cd_label}/preseed.cfg.pkrtpl.hcl"), { var = var })
-  }
+variable "pve_url" {
+    type = string
+}
+
+variable "insecure_skip_tls_verify" {
+    type = bool
+}
+
+variable "pve_username" {
+    type = string
+}
+
+variable "pve_token" {
+    type = string
+}
+
+variable "pve_node_name" {
+    type = string
+}
+
+variable "storage_pool_iso" {
+    type = string
+}
+
+variable "storage_pool_disks" {
+    type = string
 }
 
 variable "task_timeout" {
@@ -14,7 +32,6 @@ variable "task_timeout" {
 
 variable "vm_name" {
   type = string
-  default = "debian-13"
 }
 
 variable "os" {
@@ -65,6 +82,14 @@ variable "iso_download_pve" {
   type = bool
 }
 
+variable "iso_checksum" {
+  type = string
+}
+
+variable "iso_url" {
+  type = string
+}
+
 variable "disk_size" {
   type = string
 }
@@ -99,9 +124,32 @@ variable "boot_wait" {
 
 variable "vm_hostname" {
   type = string
-  default = "debian"
 }
 
 variable "cd_label" {
   type = string
+}
+
+variable "ssh_username" {
+  type = string
+}
+
+variable "ssh_timeout" {
+  type = string
+}
+
+variable "ssh_public_key" {
+  type = string
+}
+
+variable "ssh_private_key_file" {
+  type = string
+}
+
+variable "password" {
+  type = string
+}
+
+variable "boot_command" {
+  type = list(string)
 }

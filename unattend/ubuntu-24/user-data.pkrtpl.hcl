@@ -18,8 +18,6 @@ autoinstall:
 
   packages:
     - qemu-guest-agent
-    - rsync
-    - bash-completion
 
   timezone: "UTC"
 
